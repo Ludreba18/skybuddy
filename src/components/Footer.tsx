@@ -104,7 +104,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/40 text-sm">
-            © 2026 SkyBuddy. Alle Rechte vorbehalten.
+            © 2026 SkyBuddy. Alle Rechte vorbehalten. · v{__APP_VERSION__}
           </p>
           <p className="text-white/40 text-sm">
             Made with ❤️ für die Allgemeine Luftfahrt

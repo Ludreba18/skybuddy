@@ -56,7 +56,7 @@ const DashboardFooter = () => {
         {/* Copyright */}
         <div className="border-t border-border/50 mt-6 pt-4 text-center">
           <p className="text-xs text-muted-foreground">
-            © 2026 SkyBuddy. Alle Rechte vorbehalten.
+            © 2026 SkyBuddy. Alle Rechte vorbehalten. · v{__APP_VERSION__}
           </p>
         </div>
       </div>

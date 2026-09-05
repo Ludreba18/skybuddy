@@ -346,6 +346,9 @@ const Account = () => {
             Kontaktiere unseren Support
           </a>
         </p>
+        <p className="text-center text-xs text-muted-foreground/60 mt-2">
+          SkyBuddy v{__APP_VERSION__}
+        </p>
       </main>
     </div>
   );
