@@ -66,8 +66,6 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
     nickname: "",
     location: "",
     home_airport_icao: "",
@@ -94,8 +92,6 @@ const Profile = () => {
   useEffect(() => {
     if (profile) {
       setFormData({
-        first_name: profile.first_name || "",
-        last_name: profile.last_name || "",
         nickname: profile.nickname || "",
         location: profile.location || "",
         home_airport_icao: profile.home_airport_icao || "",
@@ -224,8 +220,8 @@ const Profile = () => {
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
-          first_name: formData.first_name,
-          last_name: formData.last_name,
+          first_name: null,
+          last_name: null,
           nickname: formData.nickname,
           location: formData.location,
           home_airport_icao: formData.home_airport_icao,
@@ -328,7 +324,7 @@ const Profile = () => {
   }
 
   const isPremium = profile.membership_tier === "premium";
-  const displayName = formData.nickname || `${formData.first_name} ${formData.last_name}`.trim() || "Pilot";
+  const displayName = formData.nickname || "Pilot";
 
   return (
     <div className="min-h-screen bg-background">
@@ -592,23 +588,7 @@ const Profile = () => {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Vorname</Label>
-                  <Input
-                    id="firstName"
-                    value={formData.first_name}
-                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Nachname</Label>
-                  <Input
-                    id="lastName"
-                    value={formData.last_name}
-                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="nickname">Nickname (optional)</Label>
+                  <Label htmlFor="nickname">Username</Label>
                   <Input
                     id="nickname"
                     value={formData.nickname}

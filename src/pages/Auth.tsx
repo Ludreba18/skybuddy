@@ -12,15 +12,16 @@ import { z } from "zod";
 
 const emailSchema = z.string().email("Bitte gib eine gültige E-Mail-Adresse ein");
 const passwordSchema = z.string().min(6, "Passwort muss mindestens 6 Zeichen haben");
+const usernameSchema = z.string().min(2, "Username muss mindestens 2 Zeichen haben");
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [forgotMode, setForgotMode] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [signupEmailSent, setSignupEmailSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -55,11 +56,12 @@ const Auth = () => {
     }
 
     if (!isLogin) {
-      if (!firstName.trim()) {
-        newErrors.firstName = "Vorname ist erforderlich";
-      }
-      if (!lastName.trim()) {
-        newErrors.lastName = "Nachname ist erforderlich";
+      try {
+        usernameSchema.parse(username);
+      } catch (e) {
+        if (e instanceof z.ZodError) {
+          newErrors.username = e.errors[0].message;
+        }
       }
       if (!acceptedTerms) {
         newErrors.terms = "Du musst den AGB und der Datenschutzerklärung zustimmen";
@@ -129,7 +131,7 @@ const Auth = () => {
           navigate("/dashboard");
         }
       } else {
-        const { error } = await signUp(email, password, firstName, lastName);
+        const { error, needsEmailConfirmation } = await signUp(email, password, username);
         if (error) {
           if (error.message.includes("already registered")) {
             toast({
@@ -144,6 +146,11 @@ const Auth = () => {
               variant: "destructive"
             });
           }
+        } else if (needsEmailConfirmation) {
+          // No active session yet - the account exists but needs the email
+          // confirmation link to be clicked first, so stay put and explain
+          // instead of navigating to a dashboard that requires a logged-in user.
+          setSignupEmailSent(true);
         } else {
           // GDPR consent timestamps are now set automatically by the handle_new_user trigger
           toast({
@@ -163,6 +170,38 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
+
+  if (signupEmailSent) {
+    return (
+      <div className="min-h-screen hero-gradient flex items-center justify-center p-4">
+        <div className="w-full max-w-md text-center">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <Plane className="w-6 h-6 text-white" />
+            </div>
+            <span className="font-heading font-bold text-2xl text-white">SkyBuddy</span>
+          </div>
+          <div className="glass-card rounded-2xl p-8 space-y-4">
+            <h1 className="font-heading text-2xl font-bold">Fast geschafft!</h1>
+            <p className="text-muted-foreground leading-relaxed">
+              Wir haben dir eine E-Mail an <strong>{email}</strong> geschickt. Bitte bestätige
+              deine Adresse über den Link darin, um dich anzumelden.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSignupEmailSent(false);
+                setIsLogin(true);
+              }}
+              className="text-primary hover:underline font-medium"
+            >
+              Zurück zum Login
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen hero-gradient flex items-center justify-center p-4">
@@ -274,42 +313,24 @@ const Auth = () => {
           <>
           <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-foreground">
-                    Vorname
-                  </Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      id="firstName"
-                      type="text"
-                      placeholder="Max"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className={`pl-10 ${errors.firstName ? "border-destructive" : ""}`}
-                    />
-                  </div>
-                  {errors.firstName && (
-                    <p className="text-sm text-destructive">{errors.firstName}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-foreground">
-                    Nachname
-                  </Label>
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-foreground">
+                  Username
+                </Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    id="lastName"
+                    id="username"
                     type="text"
-                    placeholder="Mustermann"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className={errors.lastName ? "border-destructive" : ""}
+                    placeholder="SkyWalker"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className={`pl-10 ${errors.username ? "border-destructive" : ""}`}
                   />
-                  {errors.lastName && (
-                    <p className="text-sm text-destructive">{errors.lastName}</p>
-                  )}
                 </div>
+                {errors.username && (
+                  <p className="text-sm text-destructive">{errors.username}</p>
+                )}
               </div>
             )}
 

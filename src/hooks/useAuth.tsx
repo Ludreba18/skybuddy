@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, username: string) => Promise<{ error: Error | null; needsEmailConfirmation?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
@@ -96,22 +96,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
+  const signUp = async (email: string, password: string, username: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
+
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
         data: {
-          first_name: firstName,
-          last_name: lastName
+          nickname: username
         }
       }
     });
-    
-    return { error: error as Error | null };
+
+    // When email confirmation is required, signUp succeeds but returns no
+    // session - the caller needs to know so it can show a "check your email"
+    // message instead of assuming the user is logged in.
+    return { error: error as Error | null, needsEmailConfirmation: !error && !data.session };
   };
 
   const signIn = async (email: string, password: string) => {

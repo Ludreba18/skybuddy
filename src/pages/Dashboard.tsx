@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,7 +18,8 @@ import { User, Calendar, MessageCircle, Users, Crown, Plus, Settings, Eye, Heart
 const Dashboard = () => {
   const {
     user,
-    profile
+    profile,
+    loading
   } = useAuth();
   const {
     hasActiveAccess,
@@ -46,7 +47,15 @@ const Dashboard = () => {
     data: myEvents = []
   } = useMyEvents(profileId);
 
-  // DashboardLayout handles loading/redirect, but we still need to guard here
+  // Normally DashboardLayout (rendered below) handles the loading/redirect
+  // states, but we access user/profile above that point for hooks. While
+  // auth is still resolving, profile can briefly be null even for a logged-in
+  // user (it's fetched right after the session loads) - only redirect once
+  // loading has actually finished, otherwise a logged-out visitor here (e.g.
+  // an unconfirmed signup) would never leave this silently-blank page.
+  if (!loading && !user) {
+    return <Navigate to="/auth" replace />;
+  }
   if (!user || !profile) {
     return null;
   }
