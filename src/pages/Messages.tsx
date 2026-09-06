@@ -140,6 +140,7 @@ const Messages = () => {
     { name: "Mein Cockpit", href: "/dashboard" },
     { name: "Piloten", href: "/pilots" },
     { name: "Fly-Outs & Events", href: "/events" },
+    { name: "Gruppen", href: "/groups" },
     { name: "Forum", href: "/forum" },
     { name: "Nachrichten", href: "/messages", active: true },
   ];

@@ -69,7 +69,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl hero-gradient flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
                 <Plane className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <span className="font-heading font-bold text-lg sm:text-xl hidden xs:block">
+              <span className="font-heading font-bold text-lg sm:text-xl">
                 Sky<span className="text-gradient-sky">Buddy</span>
               </span>
             </Link>
