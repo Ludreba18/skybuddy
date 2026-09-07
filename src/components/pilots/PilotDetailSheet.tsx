@@ -267,9 +267,9 @@ export function PilotDetailSheet({ pilot, licenses, interests, open, onOpenChang
 
             {/* Action Buttons */}
             {!isOwnProfile && (
-              <div className="flex gap-3 mt-6">
-                <Button 
-                  variant={isContact ? "secondary" : "outline"} 
+              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <Button
+                  variant={isContact ? "secondary" : "outline"}
                   className="flex-1"
                   onClick={handleToggleContact}
                   disabled={addContact.isPending || removeContact.isPending}
