@@ -1177,6 +1177,10 @@ export type Database = {
         Args: { p_group_id: string }
         Returns: undefined
       }
+      delete_own_account: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       event_type: "flyout" | "fly_in" | "stammtisch"

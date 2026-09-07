@@ -40,53 +40,14 @@ const DeleteAccountDialog = ({ userEmail }: DeleteAccountDialogProps) => {
     setIsDeleting(true);
 
     try {
-      // Delete user's data from various tables
-      // The order matters due to foreign key constraints
-      
-      // 1. Delete notifications
-      await supabase.from("notifications").delete().eq("profile_id", profile.id);
-      
-      // 2. Delete contacts
-      await supabase.from("contacts").delete().eq("profile_id", profile.id);
-      await supabase.from("contacts").delete().eq("contact_profile_id", profile.id);
-      
-      // 3. Delete forum interactions
-      await supabase.from("forum_post_likes").delete().eq("profile_id", profile.id);
-      await supabase.from("forum_comments").delete().eq("author_id", profile.id);
-      await supabase.from("forum_posts").delete().eq("author_id", profile.id);
-      
-      // 4. Delete event participations
-      await supabase.from("event_participants").delete().eq("profile_id", profile.id);
-      await supabase.from("events").delete().eq("organizer_id", profile.id);
-      
-      // 5. Delete messages and conversation participations
-      await supabase.from("messages").delete().eq("sender_id", profile.id);
-      await supabase.from("conversation_participants").delete().eq("profile_id", profile.id);
-      
-      // 6. Delete posts
-      await supabase.from("posts").delete().eq("profile_id", profile.id);
-      
-      // 7. Delete pilot data
-      await supabase.from("pilot_licenses").delete().eq("profile_id", profile.id);
-      await supabase.from("pilot_aircraft").delete().eq("profile_id", profile.id);
-      await supabase.from("pilot_interests").delete().eq("profile_id", profile.id);
-      
-      // 8. Anonymize the profile instead of deleting (to preserve referential integrity)
-      await supabase.from("profiles").update({
-        first_name: "Gelöschter",
-        last_name: "Nutzer",
-        nickname: null,
-        email: null,
-        avatar_url: null,
-        cover_image_url: null,
-        bio: null,
-        location: null,
-        home_airport_icao: null,
-        home_airport_name: null,
-        flight_hours: null,
-      }).eq("id", profile.id);
+      // Deletes the auth.users row for the current user. Every table that
+      // references profiles already cascades (ON DELETE CASCADE / SET NULL),
+      // so this one call cleans up posts, messages, contacts, etc. too - and,
+      // unlike the old anonymize-in-place approach, actually frees up the
+      // email address for a fresh registration.
+      const { error: deleteError } = await supabase.rpc("delete_own_account");
+      if (deleteError) throw deleteError;
 
-      // 9. Sign out and redirect
       await signOut();
 
       toast({
