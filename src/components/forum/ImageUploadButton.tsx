@@ -4,7 +4,7 @@ import { ImagePlus, X, Loader2 } from "lucide-react";
 import { uploadForumImage } from "@/hooks/useForum";
 import { useAuth } from "@/hooks/useAuth";
 import { compressImage } from "@/hooks/useImageCompression";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 
 interface ImageUploadButtonProps {
   imageUrl: string | null;

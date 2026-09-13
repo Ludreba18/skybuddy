@@ -62,9 +62,7 @@ export function usePaginatedPilots(filters: PilotFilters) {
         .select(
           "id, first_name, last_name, nickname, avatar_url, flight_hours, home_airport_name, home_airport_icao, bio, location",
           { count: "exact" }
-        )
-        // Exclude deleted/anonymized users
-        .neq("first_name", "Gelöschter");
+        );
 
       // Apply search filter (server-side)
       if (searchQuery) {

@@ -38,8 +38,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     );
   }
 
-  if (!user || !profile) {
+  if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // Session resolves before the profile fetch does (especially right after a
+  // hard reload) - treating "profile not loaded yet" the same as "logged
+  // out" would bounce a valid session to /auth just because it's still
+  // in-flight.
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Plane className="w-12 h-12 text-primary animate-pulse" />
+      </div>
+    );
   }
 
   // Redirect to subscribe if access expired

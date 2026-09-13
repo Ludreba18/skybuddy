@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
+import { logError } from "@/lib/errorLogger";
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
@@ -136,6 +137,11 @@ type Toast = Omit<ToasterToast, "id">;
 
 function toast({ ...props }: Toast) {
   const id = genId();
+
+  if (props.variant === "destructive") {
+    const text = [props.title, props.description].filter(Boolean).join(": ") || "Fehlermeldung angezeigt";
+    logError("toast", text, { context: { title: props.title, description: props.description } });
+  }
 
   const update = (props: ToasterToast) =>
     dispatch({

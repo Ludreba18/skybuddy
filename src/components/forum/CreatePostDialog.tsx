@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForumCategories, useCreateForumPost, useUpdateForumPost, ForumPost } from "@/hooks/useForum";
 import { MentionTextarea } from "./MentionTextarea";
 import { ImageUploadButton } from "./ImageUploadButton";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 
 interface CreatePostDialogProps {
   open: boolean;

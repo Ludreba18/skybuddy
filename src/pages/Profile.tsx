@@ -82,6 +82,8 @@ const Profile = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [eventCount, setEventCount] = useState(0);
+  const [conversationCount, setConversationCount] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -123,6 +125,19 @@ const Profile = () => {
     if (interestsData) {
       setInterests(interestsData.map((i) => i.interest));
     }
+
+    const [{ count: events }, { count: conversations }] = await Promise.all([
+      supabase
+        .from("event_participants")
+        .select("id", { count: "exact", head: true })
+        .eq("profile_id", profile.id),
+      supabase
+        .from("conversation_participants")
+        .select("id", { count: "exact", head: true })
+        .eq("profile_id", profile.id),
+    ]);
+    setEventCount(events || 0);
+    setConversationCount(conversations || 0);
   };
 
   const uploadImage = async (file: File, type: "avatar" | "cover"): Promise<string | null> => {
@@ -501,14 +516,14 @@ const Profile = () => {
                 <Calendar className="w-5 h-5 text-primary" />
                 <span className="text-sm text-muted-foreground">Events</span>
               </div>
-              <p className="font-heading text-2xl font-bold">0</p>
+              <p className="font-heading text-2xl font-bold">{eventCount}</p>
             </div>
             <div className="bg-card rounded-xl p-5 border border-border">
               <div className="flex items-center gap-3 mb-2">
                 <MessageCircle className="w-5 h-5 text-primary" />
                 <span className="text-sm text-muted-foreground">Nachrichten</span>
               </div>
-              <p className="font-heading text-2xl font-bold">0</p>
+              <p className="font-heading text-2xl font-bold">{conversationCount}</p>
             </div>
           </div>
         )}

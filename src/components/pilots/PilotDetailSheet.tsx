@@ -23,7 +23,7 @@ import { useIsContact, useAddContact, useRemoveContact } from "@/hooks/useContac
 import { useAuth } from "@/hooks/useAuth";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 
 interface PilotProfile {
   id: string;

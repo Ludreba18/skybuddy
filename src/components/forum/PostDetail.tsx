@@ -34,7 +34,7 @@ import {
 import { Heart, MessageCircle, Clock, Send, ArrowLeft, MoreVertical, Pencil, Trash2, ImagePlus, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { MentionTextarea } from "./MentionTextarea";
 import { ImageUploadButton } from "./ImageUploadButton";
