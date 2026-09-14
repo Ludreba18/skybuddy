@@ -186,7 +186,7 @@ const Profile = () => {
       console.error("Error uploading avatar:", error);
       toast({
         title: "Fehler",
-        description: "Das Profilbild konnte nicht hochgeladen werden.",
+        description: `Das Profilbild konnte nicht hochgeladen werden: ${error instanceof Error ? error.message : "Unbekannter Fehler"}`,
         variant: "destructive",
       });
     } finally {
@@ -218,7 +218,7 @@ const Profile = () => {
       console.error("Error uploading cover:", error);
       toast({
         title: "Fehler",
-        description: "Das Titelbild konnte nicht hochgeladen werden.",
+        description: `Das Titelbild konnte nicht hochgeladen werden: ${error instanceof Error ? error.message : "Unbekannter Fehler"}`,
         variant: "destructive",
       });
     } finally {
